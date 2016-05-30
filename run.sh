@@ -1,6 +1,6 @@
 #!/bin/bash
-R=$ENV{$5}
-I="s3://my-artefacts-bucket/project/artefact.jar"
+R='^s3:\/\/([^\/\S]+?)\/(.+)$'
+I=$ENV{$5}
 if [[ $I =~ $R ]]
 then
     BUCKET=${BASH_REMATCH[1]}
