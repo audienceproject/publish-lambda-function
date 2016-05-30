@@ -7,7 +7,7 @@ As a prerequisite, the [AWS Command Line Interface](https://aws.amazon.com/cli/)
 
 The step takes several arguments:
 
-* **name**: The name of the Lambda function.
+* **function-name**: The name of the Lambda function.
 * **handler**: The actual function that will be executed (handler).
 * **aws-account-id**: The AWS Account Id under which theLambda function needs to be published.
 * **lambda-role**: The AWS IAM Role that needs to be associated with the Lambda function to control its execution privileges.
@@ -16,19 +16,6 @@ The step takes several arguments:
 * **timeout**: An integer value according to the documentation for `--timeout` in the [AWS cli](http://docs.aws.amazon.com/cli/latest/reference/lambda/create-function.html) documentation. Default is `3` seconds.
 * **memory-size**: An integer value according to the documentation for `--memory-size` in the [AWS cli](http://docs.aws.amazon.com/cli/latest/reference/lambda/create-function.html) documentation. Default is `128` Mb.
 
-runtime:
-  type: string
-  required: false
-  default: nodejs4.3
-timeout:
-  type: string
-  required: false
-  default: 3
-memory-size:
-  type: string
-  required: false
-  default: 128
-
 ## Examples
 
 The first example is for a `NodeJS` function that takes in the default values fro the optional parameters.
@@ -36,7 +23,7 @@ The first example is for a `NodeJS` function that takes in the default values fr
 ```
 steps:
     - audienceproject/publish-lambda-function:
-        - name: HelloWorld
+        - function-name: HelloWorld
         - handler: src/handler.handler
         - aws-account-id: 1234567890
         - lambda-role: SomeRoleThatAllowsExecution
@@ -48,7 +35,7 @@ The second example is for a `Java` function that needs a little more then the de
 ```
 steps:
     - audienceproject/publish-lambda-function:
-        - name: GoodBye
+        - function-name: GoodBye
         - handler: com.myorganization.lambda.Greeter::goodBye
         - aws-account-id: 1234567890
         - lambda-role: SomeRoleThatAllowsExecution

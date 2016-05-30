@@ -1,12 +1,11 @@
 #!/bin/bash
 R='^s3:\/\/([^\/\S]+?)\/(.+)$'
-I="$ENV{$5}"
-if [[ $I =~ $R ]]
+if [[ $WERCKER_PUBLISH_LAMBDA_FUNCTION_S3_ARTEFACT =~ $R ]]
 then
     BUCKET=${BASH_REMATCH[1]}
     KEY=${BASH_REMATCH[2]}
 else
-    echo "$I is not a valid S3 path"
+    echo "$WERCKER_PUBLISH_LAMBDA_FUNCTION_S3_ARTEFACT is not a valid S3 path"
     exit 1;
 fi
 if [ $(aws lambda list-functions | jq '.Functions[].FunctionName | select( . == "'$ENV{$1}'" )' | wc -c) -ne 0 ]
