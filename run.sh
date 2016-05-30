@@ -1,6 +1,6 @@
 #!/bin/bash
 R='^s3:\/\/([^\/\S]+?)\/(.+)$'
-I=$ENV{$5}
+I="$ENV{$5}"
 if [[ $I =~ $R ]]
 then
     BUCKET=${BASH_REMATCH[1]}
