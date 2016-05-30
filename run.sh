@@ -1,6 +1,14 @@
 #!/bin/bash
-BUCKET=$(echo $ENV{$5} | pcregrep -o1 -Ei '^s3:\/\/(.+?)\/(.+)$')
-KEY=$(echo $ENV{$5} | pcregrep -o2 -Ei '^s3:\/\/(.+?)\/(.+)$')
+R=$ENV{$5}
+I="s3://my-artefacts-bucket/project/artefact.jar"
+if [[ $I =~ $R ]]
+then
+    BUCKET=${BASH_REMATCH[1]}
+    KEY=${BASH_REMATCH[2]}
+else
+    echo "$I is not a valid S3 path"
+    exit 1;
+fi
 if [ $(aws lambda list-functions | jq '.Functions[].FunctionName | select( . == "'$ENV{$1}'" )' | wc -c) -ne 0 ]
 then
     aws lambda update-function-configuration --function-name $ENV{$1} --role "arn:aws:iam::$ENV{$3}:role/$ENV{$4}" --handler $ENV{$2} --timeout $ENV{$7} --memory-size $ENV{$8}
