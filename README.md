@@ -43,8 +43,6 @@ steps:
         archive: fileb://$WERCKER_SOURCE_DIR/code.zip      
 ```
 
-
-
 The third example is for a `Java` function using code on S3 that explicitely sets values for optional parameters.
 
 ```

@@ -1,6 +1,6 @@
 #!/bin/bash
 R='^s3://([^/]+)/(.+)$'
-if [[ ! -z ${WERCKER_PUBLISH_LAMBDA_FUNCTION_S3_ARTEFACT+x} ]]; then
+if [[ ! -z $WERCKER_PUBLISH_LAMBDA_FUNCTION_S3_ARTEFACT ]]; then
     if [[ $WERCKER_PUBLISH_LAMBDA_FUNCTION_S3_ARTEFACT =~ $R ]]; then
         BUCKET=${BASH_REMATCH[1]}
         KEY=${BASH_REMATCH[2]}
@@ -8,7 +8,7 @@ if [[ ! -z ${WERCKER_PUBLISH_LAMBDA_FUNCTION_S3_ARTEFACT+x} ]]; then
         echo "$WERCKER_PUBLISH_LAMBDA_FUNCTION_S3_ARTEFACT is not a valid S3 path"
         exit 1
     fi
-elif [[ ! -z ${WERCKER_PUBLISH_LAMBDA_FUNCTION_ARCHIVE+x} ]]; then
+elif [[ ! -z $WERCKER_PUBLISH_LAMBDA_FUNCTION_ARCHIVE ]]; then
     if [[ -f $WERCKER_PUBLISH_LAMBDA_FUNCTION_ARCHIVE ]]; then
         echo "$WERCKER_PUBLISH_LAMBDA_FUNCTION_ARCHIVE does not exist"
         exit 1
