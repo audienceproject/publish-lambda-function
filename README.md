@@ -23,11 +23,11 @@ The first example is for a `NodeJS` function that takes in the default values fr
 ```
 steps:
     - audienceproject/publish-lambda-function:
-        - function-name: HelloWorld
-        - handler: src/handler.handler
-        - aws-account-id: 1234567890
-        - lambda-role: SomeRoleThatAllowsExecution
-        - s3-artefact: s3://my-artefacts-bucket/project/functions.zip      
+        function-name: HelloWorld
+        handler: src/handler.handler
+        aws-account-id: 1234567890
+        lambda-role: SomeRoleThatAllowsExecution
+        s3-artefact: s3://my-artefacts-bucket/project/functions.zip      
 ```
 
 The second example is for a `Java` function that needs a little more then the default values.
@@ -35,12 +35,12 @@ The second example is for a `Java` function that needs a little more then the de
 ```
 steps:
     - audienceproject/publish-lambda-function:
-        - function-name: GoodBye
-        - handler: com.myorganization.lambda.Greeter::goodBye
-        - aws-account-id: 1234567890
-        - lambda-role: SomeRoleThatAllowsExecution
-        - s3-artefact: s3://my-artefacts-bucket/project/artefact.jar
-        - runtime: java8
-        - timeout: 50
-        - memory-size: 1024      
+        function-name: GoodBye
+        handler: com.myorganization.lambda.Greeter::goodBye
+        aws-account-id: 1234567890
+        lambda-role: SomeRoleThatAllowsExecution
+        s3-artefact: s3://my-artefacts-bucket/project/artefact.jar
+        runtime: java8
+        timeout: 50
+        memory-size: 1024      
 ```

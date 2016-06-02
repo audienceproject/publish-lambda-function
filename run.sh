@@ -1,6 +1,6 @@
 #!/bin/bash
-R='^s3:\/\/([^\/\S]+?)\/(.+)$'
-if [[ $WERCKER_PUBLISH_LAMBDA_FUNCTION_S3_ARTEFACT =~ $R ]]
+RE_S3='^s3:\/\/([^\/\S]+?)\/(.+)$'
+if [[ $WERCKER_PUBLISH_LAMBDA_FUNCTION_S3_ARTEFACT =~ $RE_S3 ]]
 then
     BUCKET=${BASH_REMATCH[1]}
     KEY=${BASH_REMATCH[2]}
