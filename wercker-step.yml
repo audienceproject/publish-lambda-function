@@ -19,7 +19,10 @@ properties:
     required: true
   s3-artefact:
     type: string
-    required: true
+    required: false
+  archive:
+    type: string
+    required: false
   runtime:
     type: string
     required: false

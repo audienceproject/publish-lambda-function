@@ -11,14 +11,15 @@ The step takes several arguments:
 * **handler**: The actual function that will be executed (handler).
 * **aws-account-id**: The AWS Account Id under which theLambda function needs to be published.
 * **lambda-role**: The AWS IAM Role that needs to be associated with the Lambda function to control its execution privileges.
-* **s3-artefact**: The S3 path to the artefact that contains the function.
+* **archive**: The path to zip archive that contains the function (alternatively use s3-artefact).
+* **s3-artefact**: The S3 path to the artefact that contains the function (alternatively use archive).
 * **runtime**: A runtime according to the documentation for `--runtime` in the [AWS cli](http://docs.aws.amazon.com/cli/latest/reference/lambda/create-function.html) documentation. Default is `nodejs4.3`.
 * **timeout**: An integer value according to the documentation for `--timeout` in the [AWS cli](http://docs.aws.amazon.com/cli/latest/reference/lambda/create-function.html) documentation. Default is `3` seconds.
 * **memory-size**: An integer value according to the documentation for `--memory-size` in the [AWS cli](http://docs.aws.amazon.com/cli/latest/reference/lambda/create-function.html) documentation. Default is `128` Mb.
 
 ## Examples
 
-The first example is for a `NodeJS` function that takes in the default values fro the optional parameters.
+The first example is for a `NodeJS` function that uses code on S3 and default values for optional parameters.
 
 ```
 steps:
@@ -30,7 +31,21 @@ steps:
         s3-artefact: s3://my-artefacts-bucket/project/functions.zip      
 ```
 
-The second example is for a `Java` function that needs a little more then the default values.
+The second example is for a `NodeJS` function that uses code in zip archive and default values for optional parameters.
+
+```
+steps:
+    - audienceproject/publish-lambda-function:
+        function-name: HelloWorld
+        handler: src/handler.handler
+        aws-account-id: 1234567890
+        lambda-role: SomeRoleThatAllowsExecution
+        archive: fileb://$WERCKER_SOURCE_DIR/code.zip      
+```
+
+
+
+The third example is for a `Java` function using code on S3 that explicitely sets values for optional parameters.
 
 ```
 steps:
