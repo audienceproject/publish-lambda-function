@@ -16,6 +16,8 @@ The step takes several arguments:
 * **runtime**: A runtime according to the documentation for `--runtime` in the [AWS cli](http://docs.aws.amazon.com/cli/latest/reference/lambda/create-function.html) documentation. Default is `nodejs4.3`.
 * **timeout**: An integer value according to the documentation for `--timeout` in the [AWS cli](http://docs.aws.amazon.com/cli/latest/reference/lambda/create-function.html) documentation. Default is `3` seconds.
 * **memory-size**: An integer value according to the documentation for `--memory-size` in the [AWS cli](http://docs.aws.amazon.com/cli/latest/reference/lambda/create-function.html) documentation. Default is `128` Mb.
+* **vpc-subnet-ids**: A comma-separated list of VPC subnet IDs in which to deploy this function. Only required when deploying to a custom VPC. For more details, see the documentation for `--vpc-config` in the [AWS cli](http://docs.aws.amazon.com/cli/latest/reference/lambda/create-function.html) documentation.
+* **vpc-security-group-ids**: A comma-separated list of VPC security group IDs to attach to this function. Only required when deploying to a custom VPC. For more details, see the documentation for `--vpc-config` in the [AWS cli](http://docs.aws.amazon.com/cli/latest/reference/lambda/create-function.html) documentation.
 
 ## Examples
 
@@ -56,4 +58,18 @@ steps:
         runtime: java8
         timeout: 50
         memory-size: 1024      
+```
+
+The fourth example is for a VPC-enabled `NodeJS` function.
+
+```
+steps:
+    - audienceproject/publish-lambda-function:
+        function-name: HelloWorld
+        handler: src/handler.handler
+        aws-account-id: 1234567890
+        lambda-role: SomeRoleThatAllowsExecution
+        s3-artefact: s3://my-artefacts-bucket/project/functions.zip      
+        vpc-subnet-ids: subnet-asafe6f4,subnet-cffcbbe7
+        vpc-security-group-ids: sg-d845fea3,sg-df47fe33,sg-d82345g3
 ```
