@@ -50,10 +50,10 @@ then
     aws lambda update-function-configuration --function-name $WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME $VPC_CONFIG --role "arn:aws:iam::$WERCKER_PUBLISH_LAMBDA_FUNCTION_AWS_ACCOUNT_ID:role/$WERCKER_PUBLISH_LAMBDA_FUNCTION_LAMBDA_ROLE" --handler $WERCKER_PUBLISH_LAMBDA_FUNCTION_HANDLER --timeout $WERCKER_PUBLISH_LAMBDA_FUNCTION_TIMEOUT --memory-size $WERCKER_PUBLISH_LAMBDA_FUNCTION_MEMORY_SIZE
     if [[ ! -z ${BUCKET+x} && ! -z ${KEY+x} ]]; then
         echo "Updating Lambda function with code from S3"
-        aws lambda update-function-code --function-name $WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME $VPC_CONFIG --s3-bucket $BUCKET --s3-key $KEY
+        aws lambda update-function-code --function-name $WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME --s3-bucket $BUCKET --s3-key $KEY
     else
         echo "Updating Lambda function with code from local zip archive"
-        aws lambda update-function-code --function-name $WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME $VPC_CONFIG --zip-file $ARCHIVE
+        aws lambda update-function-code --function-name $WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME --zip-file $ARCHIVE
     fi
 else
     echo "Function not found..."
