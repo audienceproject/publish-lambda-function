@@ -18,10 +18,11 @@ The step takes several arguments:
 * **memory-size**: An integer value according to the documentation for `--memory-size` in the [AWS cli](http://docs.aws.amazon.com/cli/latest/reference/lambda/create-function.html) documentation. Default is `128` Mb.
 * **vpc-subnet-ids**: A comma-separated list of VPC subnet IDs in which to deploy this function. Only required when deploying to a custom VPC. For more details, see the documentation for `--vpc-config` in the [AWS cli](http://docs.aws.amazon.com/cli/latest/reference/lambda/create-function.html) documentation.
 * **vpc-security-group-ids**: A comma-separated list of VPC security group IDs to attach to this function. Only required when deploying to a custom VPC. For more details, see the documentation for `--vpc-config` in the [AWS cli](http://docs.aws.amazon.com/cli/latest/reference/lambda/create-function.html) documentation.
+* **error-sns-topic**: The SNS topic to notify when this Lambda function fails. When this argument is not set, no CloudWatch alarm is created and thereby error notifications are not enabled.
 
 ## Examples
 
-The first example is for a `NodeJS` function that uses code on S3 and default values for optional parameters.
+A `NodeJS` function that uses code on S3 and default values for optional parameters.
 
 ```
 steps:
@@ -33,7 +34,7 @@ steps:
         s3-artefact: s3://my-artefacts-bucket/project/functions.zip      
 ```
 
-The second example is for a `NodeJS` function that uses code in zip archive and default values for optional parameters.
+A `NodeJS` function that uses code in zip archive and default values for optional parameters.
 
 ```
 steps:
@@ -45,7 +46,7 @@ steps:
         archive: fileb://$WERCKER_SOURCE_DIR/code.zip      
 ```
 
-The third example is for a `Java` function using code on S3 that explicitely sets values for optional parameters.
+A `Java` function using code on S3 that explicitely sets values for optional parameters.
 
 ```
 steps:
@@ -57,10 +58,11 @@ steps:
         s3-artefact: s3://my-artefacts-bucket/project/artefact.jar
         runtime: java8
         timeout: 50
-        memory-size: 1024      
+        memory-size: 1024
+        error-sns-topic: arn:aws:sns:us-east-1:1234567890:exceptions
 ```
 
-The fourth example is for a VPC-enabled `NodeJS` function.
+A VPC-enabled `NodeJS` function.
 
 ```
 steps:
