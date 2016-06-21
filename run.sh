@@ -67,7 +67,7 @@ else
 fi
 
 if [[ ! -z ${WERCKER_PUBLISH_LAMBDA_FUNCTION_ERROR_SNS_TOPIC} ]]; then
-    ALARM_NAME="${WERCKER_PUBLISH_LAMBDA_FUNCTION_ERROR_SNS_TOPIC}-Errors"
+    ALARM_NAME="${WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME}-Errors"
 
     echo "Creating alarm ${ALARM_NAME}"
     aws cloudwatch put-metric-alarm --alarm-name ${ALARM_NAME} \
