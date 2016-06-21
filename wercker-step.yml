@@ -1,5 +1,5 @@
 name: publish-lambda-function
-version: 1.0.10
+version: 1.0.11
 description: A Wercker step to create or update an AWS Lambda function
 keywords:
   - lambda
@@ -39,5 +39,8 @@ properties:
     type: string
     required: false
   vpc-security-group-ids:
+    type: string
+    required: false
+  error-sns-topic:
     type: string
     required: false
