@@ -86,6 +86,7 @@ if [[ ! -z ${WERCKER_PUBLISH_LAMBDA_FUNCTION_EVENTS_SOURCE_ARN} ]]; then
         aws lambda create-event-source-mapping \
             --event-source-arn ${WERCKER_PUBLISH_LAMBDA_FUNCTION_EVENTS_SOURCE_ARN} \
             --function-name ${WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME} \
+            --batch-size ${WERCKER_PUBLISH_LAMBDA_FUNCTION_EVENTS_SOURCE_BATCH_SIZE} \
             --starting-position TRIM_HORIZON
     fi
 fi
