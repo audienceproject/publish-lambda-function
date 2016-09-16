@@ -77,3 +77,12 @@ if [[ ! -z ${WERCKER_PUBLISH_LAMBDA_FUNCTION_ERROR_SNS_TOPIC} ]]; then
         --dimensions Name=FunctionName,Value=${WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME} \
         --alarm-actions "${WERCKER_PUBLISH_LAMBDA_FUNCTION_ERROR_SNS_TOPIC}"
 fi
+
+
+if [[ ! -z ${WERCKER_PUBLISH_LAMBDA_FUNCTION_EVENTS_SOURCE_ARN} ]]; then
+    echo "Creating Lambda trigger."
+    aws lambda create-event-source-mapping \
+        --event-source-arn ${$WERCKER_PUBLISH_LAMBDA_FUNCTION_EVENTS_SOURCE_ARN} \
+        --function-name ${WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME} \
+        --starting-position TRIM_HORIZON
+fi
