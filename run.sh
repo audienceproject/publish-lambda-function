@@ -82,7 +82,7 @@ fi
 if [[ ! -z ${WERCKER_PUBLISH_LAMBDA_FUNCTION_EVENTS_SOURCE_ARN} ]]; then
     echo "Creating Lambda trigger."
     CNT=$(aws lambda list-event-source-mappings --function-name ${WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME} --event-source-arn ${WERCKER_PUBLISH_LAMBDA_FUNCTION_EVENTS_SOURCE_ARN} --query "length(EventSourceMappings[*])")
-    if [ "$CNT" == "0"]; then
+    if [[ "$CNT" == "0" ]]; then
         aws lambda create-event-source-mapping \
             --event-source-arn ${WERCKER_PUBLISH_LAMBDA_FUNCTION_EVENTS_SOURCE_ARN} \
             --function-name ${WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME} \
