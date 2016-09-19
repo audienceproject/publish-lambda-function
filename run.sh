@@ -88,5 +88,7 @@ if [[ ! -z ${WERCKER_PUBLISH_LAMBDA_FUNCTION_EVENTS_SOURCE_ARN} ]]; then
             --function-name ${WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME} \
             --batch-size ${WERCKER_PUBLISH_LAMBDA_FUNCTION_EVENTS_SOURCE_BATCH_SIZE} \
             --starting-position TRIM_HORIZON
+    else
+        echo "Trigger exists. It should be deleted first."
     fi
 fi

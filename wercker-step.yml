@@ -1,5 +1,5 @@
 name: publish-lambda-function
-version: 1.0.17
+version: 1.0.18
 description: A Wercker step to create or update an AWS Lambda function
 keywords:
   - lambda
