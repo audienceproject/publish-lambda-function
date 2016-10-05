@@ -20,6 +20,7 @@ The step takes several arguments:
 * **vpc-security-group-ids**: A comma-separated list of VPC security group IDs to attach to this function. Only required when deploying to a custom VPC. For more details, see the documentation for `--vpc-config` in the [AWS cli](http://docs.aws.amazon.com/cli/latest/reference/lambda/create-function.html) documentation.
 * **error-sns-topic**: The SNS topic to notify when this Lambda function fails. When this argument is not set, no CloudWatch alarm is created and thereby error notifications are not enabled.
 * **events-source-arn**: The _ARN_ of a _DynamoDB_ or _Kinesis Stream_ to be used as source for events that trigger the function execution and provide the input. For more details, see the documentation for _create-event-source-mapping_ in the [AWS cli](http://docs.aws.amazon.com/cli/latest/reference/lambda/create-event-source-mapping.html) documentation. Some defaults have been provided.
+* **events-source-batch-size**: The batch size for the stream specified with **events-source-arn**.
 
 ## Examples
 

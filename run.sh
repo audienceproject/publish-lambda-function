@@ -82,14 +82,19 @@ fi
 if [[ ! -z ${WERCKER_PUBLISH_LAMBDA_FUNCTION_EVENTS_SOURCE_ARN} ]]; then
     echo "Creating Lambda trigger."
     CNT=$(aws lambda list-event-source-mappings --function-name ${WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME} --event-source-arn ${WERCKER_PUBLISH_LAMBDA_FUNCTION_EVENTS_SOURCE_ARN} --query "length(EventSourceMappings[*])")
-    if [[ "$CNT" != "0" ]]; then
-        echo "Removing old version of the trigger."
-        aws lambda delete-event-source-mapping --uuid $(aws lambda list-event-source-mappings --function-name ${WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME} --event-source-arn ${WERCKER_PUBLISH_LAMBDA_FUNCTION_EVENTS_SOURCE_ARN} --query "EventSourceMappings[0].UUID")
+    if [[ "$CNT" == "0" ]]; then
+        aws lambda create-event-source-mapping \
+            --event-source-arn ${WERCKER_PUBLISH_LAMBDA_FUNCTION_EVENTS_SOURCE_ARN} \
+            --function-name ${WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME} \
+            --batch-size ${WERCKER_PUBLISH_LAMBDA_FUNCTION_EVENTS_SOURCE_BATCH_SIZE} \
+            --starting-position TRIM_HORIZON
+        echo "Added new trigger."
     fi
-    aws lambda create-event-source-mapping \
-        --event-source-arn ${WERCKER_PUBLISH_LAMBDA_FUNCTION_EVENTS_SOURCE_ARN} \
-        --function-name ${WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME} \
-        --batch-size ${WERCKER_PUBLISH_LAMBDA_FUNCTION_EVENTS_SOURCE_BATCH_SIZE} \
-        --starting-position TRIM_HORIZON
-    echo "Added new trigger."
+else
+    echo "Removing triggers becuase none were specified."
+    uuids=$(aws lambda list-event-source-mappings --function-name ${WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME} --query "EventSourceMappings[0].UUID" --output text)
+    for uid in $uuids
+    do
+        aws lambda delete-event-source-mapping --uuid $uuid
+    done
 fi
