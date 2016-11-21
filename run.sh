@@ -101,10 +101,10 @@ if [[ ! -z ${WERCKER_PUBLISH_LAMBDA_FUNCTION_EVENTS_SOURCE_ARN} ]]; then
         echo "Added new trigger."
     fi
 else
-    echo "Removing triggers becuase none were specified."
-    uuids=$(aws lambda list-event-source-mappings --function-name ${WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME} --query "EventSourceMappings[0].UUID" --output text)
-    for uuid in $uuids
-    do
-        aws lambda delete-event-source-mapping --uuid $uuid
-    done
+    # echo "Removing triggers becuase none were specified."
+    # uuids=$(aws lambda list-event-source-mappings --function-name ${WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME} --query "EventSourceMappings[0].UUID" --output text)
+    # for uuid in $uuids
+    # do
+    #     aws lambda delete-event-source-mapping --uuid $uuid
+    # done
 fi
