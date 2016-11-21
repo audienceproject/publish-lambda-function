@@ -21,6 +21,8 @@ The step takes several arguments:
 * **error-sns-topic**: The SNS topic to notify when this Lambda function fails. When this argument is not set, no CloudWatch alarm is created and thereby error notifications are not enabled.
 * **events-source-arn**: The _ARN_ of a _DynamoDB_ or _Kinesis Stream_ to be used as source for events that trigger the function execution and provide the input. For more details, see the documentation for _create-event-source-mapping_ in the [AWS cli](http://docs.aws.amazon.com/cli/latest/reference/lambda/create-event-source-mapping.html) documentation. Some defaults have been provided.
 * **events-source-batch-size**: The batch size for the stream specified with **events-source-arn**.
+* **description**: The description of the Lambda function.
+* **environment**: A string representing the environment variables set for this function. Please refer to the documentation for `--environment` in [AWS cli](http://docs.aws.amazon.com/cli/latest/reference/lambda/create-function.html). Eg: `KeyName1=string,KeyName2=string`
 
 ## Examples
 
@@ -33,7 +35,8 @@ steps:
         handler: src/handler.handler
         aws-account-id: 1234567890
         lambda-role: SomeRoleThatAllowsExecution
-        s3-artefact: s3://my-artefacts-bucket/project/functions.zip      
+        s3-artefact: s3://my-artefacts-bucket/project/functions.zip
+        environment: 'USER=world,ACTION=hello'
 ```
 
 A `NodeJS` function that uses code in zip archive and default values for optional parameters.
