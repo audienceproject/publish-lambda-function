@@ -108,3 +108,11 @@ if [[ ! -z ${WERCKER_PUBLISH_LAMBDA_FUNCTION_EVENTS_SOURCE_ARN} ]]; then
     #     aws lambda delete-event-source-mapping --uuid $uuid
     # done
 fi
+
+# Add tags
+if [[ ! -z $WERCKER_PUBLISH_LAMBDA_FUNCTION_TAGS ]]; then
+    FUNCTION_ARN=$(aws lambda get-function --function-name ${WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME} --output text --query 'Configuration.FunctionArn')
+    aws lambda tag-resource \
+        --resource $FUNCTION_ARN \
+        --tags "${WERCKER_PUBLISH_LAMBDA_FUNCTION_TAGS}"
+fi
