@@ -24,6 +24,7 @@ The step takes several arguments:
 * **description**: The description of the Lambda function.
 * **environment**: A string representing the environment variables set for this function. Please refer to the documentation for `--environment` in [AWS cli](http://docs.aws.amazon.com/cli/latest/reference/lambda/create-function.html). Eg: `KeyName1=string,KeyName2=string`
 * **tags**: A string representing the list of tags to set for this function. Please refer to the documentation for `tag-resource` in [AWS cli](http://docs.aws.amazon.com/cli/latest/reference/lambda/tag-resource.html). Eg: `KeyName1=string,KeyName2=string`
+* **tracing**: Set to 'true' for enabling X-Ray Active tracing. 
 
 ## Examples
 

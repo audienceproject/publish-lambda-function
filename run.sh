@@ -116,3 +116,11 @@ if [[ ! -z $WERCKER_PUBLISH_LAMBDA_FUNCTION_TAGS ]]; then
         --resource $FUNCTION_ARN \
         --tags "${WERCKER_PUBLISH_LAMBDA_FUNCTION_TAGS}"
 fi
+
+# Add tracing
+if [[ ! -z $WERCKER_PUBLISH_LAMBDA_FUNCTION_TRACING ]]; then
+    echo "Adding Active tracing"
+    aws lambda update-function-configuration \
+        --function-name ${WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME} \
+        --tracing-config Mode=Active
+fi
