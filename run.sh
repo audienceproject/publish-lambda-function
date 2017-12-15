@@ -60,19 +60,38 @@ then
     aws lambda update-function-configuration --function-name $WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME $VPC_CONFIG --role "arn:aws:iam::$WERCKER_PUBLISH_LAMBDA_FUNCTION_AWS_ACCOUNT_ID:role/$WERCKER_PUBLISH_LAMBDA_FUNCTION_LAMBDA_ROLE" --handler $WERCKER_PUBLISH_LAMBDA_FUNCTION_HANDLER --timeout $WERCKER_PUBLISH_LAMBDA_FUNCTION_TIMEOUT --memory-size $WERCKER_PUBLISH_LAMBDA_FUNCTION_MEMORY_SIZE $DESC_CONFIG $ENV_CONFIG
     if [[ ! -z ${BUCKET+x} && ! -z ${KEY+x} ]]; then
         echo "Updating Lambda function with code from S3"
-        aws lambda update-function-code --function-name $WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME --s3-bucket $BUCKET --s3-key $KEY
+        FUNCTION_DESCRIPTION=$(aws lambda update-function-code --function-name $WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME --s3-bucket $BUCKET --s3-key $KEY --publish)
+        echo "Function updated: ${FUNCTION_DESCRIPTION}"
     else
         echo "Updating Lambda function with code from local zip archive"
-        aws lambda update-function-code --function-name $WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME --zip-file $ARCHIVE
+        FUNCTION_DESCRIPTION=$(aws lambda update-function-code --function-name $WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME --zip-file $ARCHIVE --publish)
+        echo "Function updated: ${FUNCTION_DESCRIPTION}"
     fi
 else
     echo "Function not found..."
     if [[ ! -z ${BUCKET+x} && ! -z ${KEY+x} ]]; then
         echo "Creating Lambda function with code from S3"
-        aws lambda create-function --function-name $WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME $VPC_CONFIG --runtime $WERCKER_PUBLISH_LAMBDA_FUNCTION_RUNTIME --role "arn:aws:iam::$WERCKER_PUBLISH_LAMBDA_FUNCTION_AWS_ACCOUNT_ID:role/$WERCKER_PUBLISH_LAMBDA_FUNCTION_LAMBDA_ROLE" --handler $WERCKER_PUBLISH_LAMBDA_FUNCTION_HANDLER --code S3Bucket=$BUCKET,S3Key=$KEY --timeout $WERCKER_PUBLISH_LAMBDA_FUNCTION_TIMEOUT --memory-size $WERCKER_PUBLISH_LAMBDA_FUNCTION_MEMORY_SIZE $DESC_CONFIG $ENV_CONFIG
+        FUNCTION_DESCRIPTION=$(aws lambda create-function --function-name $WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME $VPC_CONFIG --runtime $WERCKER_PUBLISH_LAMBDA_FUNCTION_RUNTIME --role "arn:aws:iam::$WERCKER_PUBLISH_LAMBDA_FUNCTION_AWS_ACCOUNT_ID:role/$WERCKER_PUBLISH_LAMBDA_FUNCTION_LAMBDA_ROLE" --handler $WERCKER_PUBLISH_LAMBDA_FUNCTION_HANDLER --code S3Bucket=$BUCKET,S3Key=$KEY --timeout $WERCKER_PUBLISH_LAMBDA_FUNCTION_TIMEOUT --memory-size $WERCKER_PUBLISH_LAMBDA_FUNCTION_MEMORY_SIZE $DESC_CONFIG $ENV_CONFIG --publish)
+        echo "Function created: ${FUNCTION_DESCRIPTION}"
     else
         echo "Creating Lambda function with code from local zip archive"
-        aws lambda create-function --function-name $WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME $VPC_CONFIG --runtime $WERCKER_PUBLISH_LAMBDA_FUNCTION_RUNTIME --role "arn:aws:iam::$WERCKER_PUBLISH_LAMBDA_FUNCTION_AWS_ACCOUNT_ID:role/$WERCKER_PUBLISH_LAMBDA_FUNCTION_LAMBDA_ROLE" --handler $WERCKER_PUBLISH_LAMBDA_FUNCTION_HANDLER --zip-file $ARCHIVE --timeout $WERCKER_PUBLISH_LAMBDA_FUNCTION_TIMEOUT --memory-size $WERCKER_PUBLISH_LAMBDA_FUNCTION_MEMORY_SIZE $DESC_CONFIG $ENV_CONFIG
+        FUNCTION_DESCRIPTION=$(aws lambda create-function --function-name $WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME $VPC_CONFIG --runtime $WERCKER_PUBLISH_LAMBDA_FUNCTION_RUNTIME --role "arn:aws:iam::$WERCKER_PUBLISH_LAMBDA_FUNCTION_AWS_ACCOUNT_ID:role/$WERCKER_PUBLISH_LAMBDA_FUNCTION_LAMBDA_ROLE" --handler $WERCKER_PUBLISH_LAMBDA_FUNCTION_HANDLER --zip-file $ARCHIVE --timeout $WERCKER_PUBLISH_LAMBDA_FUNCTION_TIMEOUT --memory-size $WERCKER_PUBLISH_LAMBDA_FUNCTION_MEMORY_SIZE $DESC_CONFIG $ENV_CONFIG --publish)
+        echo "Function created: ${FUNCTION_DESCRIPTION}"
+    fi
+fi
+
+# Create Lambda alias
+if [[ ! -z ${WERCKER_PUBLISH_LAMBDA_FUNCTION_ALIAS} ]]; then
+    # Find version number of newly published function
+    FUNCTION_VERSION=$(echo $FUNCTION_DESCRIPTION | jq -r .Version)
+
+    # Check if alias exists
+    if [ $(aws lambda list-aliases --function-name ${WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME}  --query "length(Aliases[?Name == '${WERCKER_PUBLISH_LAMBDA_FUNCTION_ALIAS}'])") -ne 0 ]; then
+        echo "Alias ${WERCKER_PUBLISH_LAMBDA_FUNCTION_ALIAS} already exists, updating it to point to version ${FUNCTION_VERSION}."
+        aws lambda update-alias --function-name ${WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME} --function-version ${FUNCTION_VERSION} --name ${WERCKER_PUBLISH_LAMBDA_FUNCTION_ALIAS}
+    else
+        echo "Alias ${WERCKER_PUBLISH_LAMBDA_FUNCTION_ALIAS} does not exist. Creating it and pointing it to version ${FUNCTION_VERSION}."
+        aws lambda create-alias --function-name ${WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME} --function-version ${FUNCTION_VERSION} --name ${WERCKER_PUBLISH_LAMBDA_FUNCTION_ALIAS}
     fi
 fi
 
