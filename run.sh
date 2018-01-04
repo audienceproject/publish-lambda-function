@@ -57,7 +57,10 @@ echo "Looking for existing function with name $WERCKER_PUBLISH_LAMBDA_FUNCTION_F
 if [ $(aws lambda list-functions | jq '.Functions[].FunctionName | select( . == "'$WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME'" )' | wc -c) -ne 0 ];
 then
     echo "Function found..."
+
     aws lambda update-function-configuration --function-name $WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME $VPC_CONFIG --role "arn:aws:iam::$WERCKER_PUBLISH_LAMBDA_FUNCTION_AWS_ACCOUNT_ID:role/$WERCKER_PUBLISH_LAMBDA_FUNCTION_LAMBDA_ROLE" --handler $WERCKER_PUBLISH_LAMBDA_FUNCTION_HANDLER --timeout $WERCKER_PUBLISH_LAMBDA_FUNCTION_TIMEOUT --memory-size $WERCKER_PUBLISH_LAMBDA_FUNCTION_MEMORY_SIZE $DESC_CONFIG $ENV_CONFIG
+    [ $? -eq 0 ] || exit $?
+
     if [[ ! -z ${BUCKET+x} && ! -z ${KEY+x} ]]; then
         echo "Updating Lambda function with code from S3"
         FUNCTION_DESCRIPTION=$(aws lambda update-function-code --function-name $WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME --s3-bucket $BUCKET --s3-key $KEY --publish)
