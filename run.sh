@@ -61,10 +61,12 @@ then
     if [[ ! -z ${BUCKET+x} && ! -z ${KEY+x} ]]; then
         echo "Updating Lambda function with code from S3"
         FUNCTION_DESCRIPTION=$(aws lambda update-function-code --function-name $WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME --s3-bucket $BUCKET --s3-key $KEY --publish)
+        [ $? -eq 0 ] || exit $?
         echo "Function updated: ${FUNCTION_DESCRIPTION}"
     else
         echo "Updating Lambda function with code from local zip archive"
         FUNCTION_DESCRIPTION=$(aws lambda update-function-code --function-name $WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME --zip-file $ARCHIVE --publish)
+        [ $? -eq 0 ] || exit $?
         echo "Function updated: ${FUNCTION_DESCRIPTION}"
     fi
 else
@@ -72,10 +74,12 @@ else
     if [[ ! -z ${BUCKET+x} && ! -z ${KEY+x} ]]; then
         echo "Creating Lambda function with code from S3"
         FUNCTION_DESCRIPTION=$(aws lambda create-function --function-name $WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME $VPC_CONFIG --runtime $WERCKER_PUBLISH_LAMBDA_FUNCTION_RUNTIME --role "arn:aws:iam::$WERCKER_PUBLISH_LAMBDA_FUNCTION_AWS_ACCOUNT_ID:role/$WERCKER_PUBLISH_LAMBDA_FUNCTION_LAMBDA_ROLE" --handler $WERCKER_PUBLISH_LAMBDA_FUNCTION_HANDLER --code S3Bucket=$BUCKET,S3Key=$KEY --timeout $WERCKER_PUBLISH_LAMBDA_FUNCTION_TIMEOUT --memory-size $WERCKER_PUBLISH_LAMBDA_FUNCTION_MEMORY_SIZE $DESC_CONFIG $ENV_CONFIG --publish)
+        [ $? -eq 0 ] || exit $?
         echo "Function created: ${FUNCTION_DESCRIPTION}"
     else
         echo "Creating Lambda function with code from local zip archive"
         FUNCTION_DESCRIPTION=$(aws lambda create-function --function-name $WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME $VPC_CONFIG --runtime $WERCKER_PUBLISH_LAMBDA_FUNCTION_RUNTIME --role "arn:aws:iam::$WERCKER_PUBLISH_LAMBDA_FUNCTION_AWS_ACCOUNT_ID:role/$WERCKER_PUBLISH_LAMBDA_FUNCTION_LAMBDA_ROLE" --handler $WERCKER_PUBLISH_LAMBDA_FUNCTION_HANDLER --zip-file $ARCHIVE --timeout $WERCKER_PUBLISH_LAMBDA_FUNCTION_TIMEOUT --memory-size $WERCKER_PUBLISH_LAMBDA_FUNCTION_MEMORY_SIZE $DESC_CONFIG $ENV_CONFIG --publish)
+        [ $? -eq 0 ] || exit $?
         echo "Function created: ${FUNCTION_DESCRIPTION}"
     fi
 fi
