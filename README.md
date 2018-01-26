@@ -26,7 +26,7 @@ The step takes several arguments:
 * **tags**: A string representing the list of tags to set for this function. Please refer to the documentation for `tag-resource` in [AWS cli](http://docs.aws.amazon.com/cli/latest/reference/lambda/tag-resource.html). Eg: `KeyName1=string,KeyName2=string`
 * **tracing**: Set to 'true' for enabling X-Ray Active tracing.
 * **alias**: Create an alias for the newly created function version. Read more about versioning and aliases [here](http://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html).
-* **dead-letter-queue-arn**: ARN for SNS or SQS resource to use as a dead-letter queue (DLQ) for this Lambda function. Please refer to the documentation for `--dead-letter-config` in [AWS cli](https://docs.aws.amazon.com/cli/latest/reference/lambda/update-function-configuration.html).
+* **dead-letter-queue-arn**: ARN for SNS or SQS resource to use as a dead-letter queue (DLQ) for this Lambda function. Please refer to the documentation in the `--dead-letter-config` section of `update-function-configuration` in the [AWS cli](https://docs.aws.amazon.com/cli/latest/reference/lambda/update-function-configuration.html).
 
 ## Examples
 
