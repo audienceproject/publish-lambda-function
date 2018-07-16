@@ -1,5 +1,5 @@
 name: publish-lambda-function
-version: 1.1.16
+version: 1.1.17
 description: A Wercker step to create or update an AWS Lambda function
 keywords:
   - lambda
@@ -8,15 +8,15 @@ properties:
   function-name:
     type: string
     required: true
-  handler:
-    type: string
-    required: true
   aws-account-id:
     type: string
     required: true
+  handler:
+    type: string
+    required: false
   lambda-role:
     type: string
-    required: true
+    required: false
   s3-artefact:
     type: string
     required: false
