@@ -58,6 +58,50 @@ if [[ ! -z $WERCKER_PUBLISH_LAMBDA_FUNCTION_DEAD_LETTER_QUEUE_ARN ]]; then
     DLQ_CONFIG="--dead-letter-config TargetArn={${WERCKER_PUBLISH_LAMBDA_FUNCTION_DEAD_LETTER_QUEUE_ARN}}"
 fi
 
+function get_lambda_state {
+  aws lambda get-function \
+    --function-name "$WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME" \
+    --query 'Configuration.[State, LastUpdateStatus]'
+}
+
+function await_modification_complete {
+  while true; do
+    STATES=$(get_lambda_state)
+    Status=$(echo "$STATES" | jq -r '.[0]')
+    LastUpdateStatus=$(echo "$STATES" | jq -r '.[1]')
+    echo "Status=${Status}, LastUpdateStatus=${LastUpdateStatus}"
+
+    case $LastUpdateStatus in
+    "Successful")
+      ;;
+    "InProgress")
+      sleep 2
+      continue
+      ;;
+    *)
+      echo "LastUpdateStatus error"
+      exit 1
+      ;;
+    esac
+
+    case $Status in
+    "Active")
+      ;;
+    "Pending")
+      sleep 2
+      continue
+      ;;
+    *)
+      echo "Status error"
+      exit 1
+      ;;
+    esac
+
+    # If we get this far everything is ok
+    break
+  done
+}
+
 echo "Looking for existing function with name $WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME"
 if [ $(aws lambda list-functions | jq '.Functions[].FunctionName | select( . == "'$WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME'" )' | wc -c) -ne 0 ];
 then
@@ -65,6 +109,7 @@ then
 
     aws lambda update-function-configuration --function-name $WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME $VPC_CONFIG --role "arn:aws:iam::$WERCKER_PUBLISH_LAMBDA_FUNCTION_AWS_ACCOUNT_ID:role/$WERCKER_PUBLISH_LAMBDA_FUNCTION_LAMBDA_ROLE" --handler $WERCKER_PUBLISH_LAMBDA_FUNCTION_HANDLER --timeout $WERCKER_PUBLISH_LAMBDA_FUNCTION_TIMEOUT --memory-size $WERCKER_PUBLISH_LAMBDA_FUNCTION_MEMORY_SIZE $DESC_CONFIG $ENV_CONFIG $DLQ_CONFIG
     [ $? -eq 0 ] || exit $?
+    await_modification_complete
 
     if [[ ! -z ${BUCKET+x} && ! -z ${KEY+x} ]]; then
         echo "Updating Lambda function with code from S3"
@@ -77,6 +122,8 @@ then
         [ $? -eq 0 ] || exit $?
         echo "Function updated: ${FUNCTION_DESCRIPTION}"
     fi
+
+    await_modification_complete
 else
     echo "Function not found..."
     if [[ ! -z ${BUCKET+x} && ! -z ${KEY+x} ]]; then
@@ -90,6 +137,8 @@ else
         [ $? -eq 0 ] || exit $?
         echo "Function created: ${FUNCTION_DESCRIPTION}"
     fi
+
+    await_modification_complete
 fi
 
 # Create Lambda alias
@@ -105,6 +154,8 @@ if [[ ! -z ${WERCKER_PUBLISH_LAMBDA_FUNCTION_ALIAS} ]]; then
         echo "Alias ${WERCKER_PUBLISH_LAMBDA_FUNCTION_ALIAS} does not exist. Creating it and pointing it to version ${FUNCTION_VERSION}."
         aws lambda create-alias --function-name ${WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME} --function-version ${FUNCTION_VERSION} --name ${WERCKER_PUBLISH_LAMBDA_FUNCTION_ALIAS}
     fi
+
+    await_modification_complete
 fi
 
 if [[ ! -z ${WERCKER_PUBLISH_LAMBDA_FUNCTION_ERROR_SNS_TOPIC} ]]; then
@@ -130,6 +181,8 @@ if [[ ! -z ${WERCKER_PUBLISH_LAMBDA_FUNCTION_EVENTS_SOURCE_ARN} ]]; then
             --batch-size ${WERCKER_PUBLISH_LAMBDA_FUNCTION_EVENTS_SOURCE_BATCH_SIZE} \
             --starting-position TRIM_HORIZON
         echo "Added new trigger."
+
+        await_modification_complete
     fi
 # else
     # echo "Removing triggers becuase none were specified"
@@ -146,6 +199,8 @@ if [[ ! -z $WERCKER_PUBLISH_LAMBDA_FUNCTION_TAGS ]]; then
     aws lambda tag-resource \
         --resource $FUNCTION_ARN \
         --tags "${WERCKER_PUBLISH_LAMBDA_FUNCTION_TAGS}"
+
+    await_modification_complete
 fi
 
 # Add tracing
@@ -154,4 +209,6 @@ if [[ ! -z $WERCKER_PUBLISH_LAMBDA_FUNCTION_TRACING ]]; then
     aws lambda update-function-configuration \
         --function-name ${WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME} \
         --tracing-config Mode=Active
+
+    await_modification_complete
 fi
