@@ -61,7 +61,7 @@ fi
 function get_lambda_state {
   aws lambda get-function \
     --function-name "$WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME" \
-    --query 'Configuration.[State, LastUpdateStatus]'
+    --query 'Configuration.[State, LastUpdateStatus,LastUpdateStatusReason,LastUpdateStatusReasonCode]'
 }
 
 function await_modification_complete {
@@ -69,7 +69,9 @@ function await_modification_complete {
     STATES=$(get_lambda_state)
     Status=$(echo "$STATES" | jq -r '.[0]')
     LastUpdateStatus=$(echo "$STATES" | jq -r '.[1]')
-    echo "Status=${Status}, LastUpdateStatus=${LastUpdateStatus}"
+    LastUpdateStatusReason=$(echo "$STATES" | jq -r '.[2]')
+    LastUpdateStatusReasonCode=$(echo "$STATES" | jq -r '.[3]')
+    echo "Status=${Status}, LastUpdateStatus=${LastUpdateStatus}, LastUpdateStatusReason=${LastUpdateStatusReason}, LastUpdateStatusReasonCode=${LastUpdateStatusReasonCode}"
 
     case $LastUpdateStatus in
     "Successful")
@@ -86,6 +88,8 @@ function await_modification_complete {
 
     case $Status in
     "Active")
+      ;;
+    "Inactive")
       ;;
     "Pending")
       sleep 2
