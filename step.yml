@@ -1,71 +1,71 @@
 name: publish-lambda-function
-version: 1.1.18
-description: A Wercker step to create or update an AWS Lambda function
+version: 1.1.19
+summary: A Wercker step to create or update an AWS Lambda function
 keywords:
   - lambda
   - aws
 properties:
-  function-name:
+  - name: function-name
     type: string
     required: true
-  aws-account-id:
+  - name: aws-account-id
     type: string
     required: true
-  handler:
+  - name: handler
     type: string
     required: false
-  lambda-role:
+  - name: lambda-role
     type: string
     required: false
-  s3-artefact:
+  - name: s3-artefact
     type: string
     required: false
-  archive:
+  - name: archive
     type: string
     required: false
-  runtime:
+  - name: untime
     type: string
     required: false
     default: nodejs4.3
-  timeout:
+  - name: timeout
     type: string
     required: false
     default: 3
-  memory-size:
+  - name: memory-size
     type: string
     required: false
     default: 128
-  vpc-subnet-ids:
+  - name: vpc-subnet-ids
     type: string
     required: false
-  vpc-security-group-ids:
+  - name: vpc-security-group-ids
     type: string
     required: false
-  error-sns-topic:
+  - name: error-sns-topic
     type: string
     required: false
-  events-source-arn:
+  - name: events-source-arn
     type: string
     required: false
-  events-source-batch-size:
+  - name: events-source-batch-size
     type: string
     required: false
     default: 1
-  description:
+  - name: description
     type: string
     required: false
-  environment:
+  - name: environment
     type: string
     required: false
-  tags:
+  - name: tags
     type: string
     required: false
-  tracing:
+  - name: tracing
     type: string
     required: false
-  alias:
+  - name: alias
     type: string
     required: false
-  dead-letter-queue-arn:
+  - name: dead-letter-queue-arn
     type: string
     required: false
