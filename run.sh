@@ -60,7 +60,7 @@ fi
 
 function get_lambda_state {
   aws lambda get-function \
-    --function-name "$WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME" \
+    --function-name ${WERCKER_PUBLISH_LAMBDA_FUNCTION_FUNCTION_NAME} \
     --query 'Configuration.[State, LastUpdateStatus,LastUpdateStatusReason,LastUpdateStatusReasonCode]'
 }
 
